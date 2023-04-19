@@ -186,7 +186,7 @@ public class RegisteredCommand<CEC extends CommandExecutionContext<CEC, ? extend
 
             Object obj = method.invoke(scope, methodArgs);
 
-            Object obj = method.invoke(scope, passedArgs.values().toArray());
+            //Object obj = method.invoke(scope, passedArgs.values().toArray());
             if (obj instanceof CompletionStage<?>) {
                 CompletionStage<?> future = (CompletionStage<?>) obj;
                 future.exceptionally(t -> {

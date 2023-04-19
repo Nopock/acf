@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static co.aikar.commands.ACFBukkitUtil.isValidName;
 
 @SuppressWarnings("WeakerAccess")
 public class BukkitCommandContexts extends CommandContexts<BukkitCommandExecutionContext> {
@@ -78,7 +77,7 @@ public class BukkitCommandContexts extends CommandContexts<BukkitCommandExecutio
 
                 throw new InvalidCommandArgument(false);
             }
-            return players.toArray(new OnlinePlayer[players.size()]);
+            return players.toArray(new OnlinePlayer[0]);
         });
         registerIssuerAwareContext(World.class, (c) -> {
             String firstArg = c.getFirstArg();
@@ -140,11 +139,17 @@ public class BukkitCommandContexts extends CommandContexts<BukkitCommandExecutio
                     throw new InvalidCommandArgument(MinecraftMessageKeys.NO_PLAYER_FOUND_OFFLINE,
                             "{search}", name);
                 }
-                offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                offlinePlayer = Bukkit.getPlayer(uuid);
+                if (offlinePlayer == null) {
+                    offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                }
             } else {
-                offlinePlayer = Bukkit.getOfflinePlayer(name);
+                offlinePlayer = Bukkit.getPlayer(name);
+                if (offlinePlayer == null) {
+                    offlinePlayer = Bukkit.getOfflinePlayer(name);
+                }
             }
-            if (offlinePlayer == null || (!offlinePlayer.hasPlayedBefore() && !offlinePlayer.isOnline())) {
+            if (!offlinePlayer.hasPlayedBefore() && !offlinePlayer.isOnline()) {
                 if (!c.hasFlag("uuid") && !manager.isValidName(name)) {
                     throw new InvalidCommandArgument(MinecraftMessageKeys.IS_NOT_A_VALID_NAME, "{name}", name);
                 }
